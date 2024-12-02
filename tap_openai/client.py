@@ -1,26 +1,22 @@
-"""REST client handling, including OpenAiStream base class."""
+"""REST client handling, including OpenAIStream base class."""
 
 from __future__ import annotations
 
 import decimal
 import typing as t
-from importlib import resources
 
 from singer_sdk.authenticators import BearerTokenAuthenticator
 from singer_sdk.helpers.jsonpath import extract_jsonpath
 from singer_sdk.pagination import BaseAPIPaginator  # noqa: TCH002
 from singer_sdk.streams import RESTStream
+from datetime import datetime
 
 if t.TYPE_CHECKING:
     import requests
     from singer_sdk.helpers.types import Context
 
 
-# TODO: Delete this is if not using json files for schema definition
-SCHEMAS_DIR = resources.files(__package__) / "schemas"
-
-
-class OpenAiStream(RESTStream):
+class OpenAIStream(RESTStream):
     """OpenAi stream class."""
 
     records_jsonpath = "$[*]"
@@ -84,20 +80,20 @@ class OpenAiStream(RESTStream):
             A dictionary of URL query parameters.
         """
         params: dict = {}
-        if next_page_token:
-            params["page"] = next_page_token
-        if self.replication_key:
-            params["sort"] = "asc"
-            params["order_by"] = self.replication_key
-        if "exclude_project_costs" in self.config:
-            params["exclude_project_costs"] = self.config.get("exclude_project_costs")
-        if "file_format" in self.config:
-            params["file_format"] = self.config.get("file_format")
-        if "group_by" in self.config:
-            params["group_by"] = self.config.get("group_by")
-        if "new_endpoint" in self.config:
-            params["new_endpoint"] = self.config.get("new_endpoint")
+        start_date = datetime.strptime(
+            self.config.get("start_date"), "%Y-%m-%dT%H:%M:%SZ"
+        )
+        end_date = datetime.strptime(self.config.get("end_date"), "%Y-%m-%dT%H:%M:%SZ")
+        params["start_date"] = start_date.date()
+        params["end_date"] = end_date.date()
+        params["exclude_project_costs"] = self.config.get("exclude_project_costs")
+        params["file_format"] = self.config.get("file_format")
+        params["group_by"] = self.config.get("group_by")
+        params["new_endpoint"] = self.config.get("new_endpoint")
         return params
+
+    # def validate_response(self, response: requests.Response) -> None:
+    #     logging.warning(response.json())
 
     def parse_response(self, response: requests.Response) -> t.Iterable[dict]:
         """Parse the response and return an iterator of result records.

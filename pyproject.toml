@@ -63,4 +63,4 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.poetry.scripts]
 # CLI declaration
-tap-openai = 'tap_openai.tap:TapOpenAi.cli'
+tap-openai = 'tap_openai.tap:TapOpenAI.cli'

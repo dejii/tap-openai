@@ -6,14 +6,14 @@ import typing as t
 
 from singer_sdk import typing as th
 
-from tap_openai.client import OpenAiStream
+from tap_openai.client import OpenAIStream
 
 
-class BillingUsageStream(OpenAiStream):
+class BillingUsageStream(OpenAIStream):
     """Define custom stream."""
 
     name = "billing_usage"
-    path = "/v1/dashboard//billing/usage/export"
+    path = "/v1/dashboard/billing/usage/export"
     primary_keys: t.ClassVar[list[str]] = ["user_id", "name", "date"]
     replication_key = "timestamp"
     schema = th.PropertiesList(
@@ -26,3 +26,14 @@ class BillingUsageStream(OpenAiStream):
         th.Property("date", th.DateType),
         th.Property("timestamp", th.IntegerType),
     ).to_dict()
+    records_jsonpath = "$.data[*]"
+
+    def post_process(
+        self,
+        row: dict,
+        context: dict | None = None,  # noqa: ARG002
+    ) -> dict | None:
+        """Post-process each record returned from the API."""
+        timestamp = row.get("timestamp")
+        row["timestamp"] = int(timestamp)
+        return row

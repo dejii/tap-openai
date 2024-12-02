@@ -40,22 +40,25 @@ class TapOpenAI(Tap):
         th.Property(
             "exclude_project_costs",
             th.BooleanType,
+            required=True,
             description="Exclude project costs",
         ),
         th.Property(
             "file_format",
             th.StringType,
+            required=True,
             description="The earliest record date to sync",
         ),
         th.Property(
             "group_by",
             th.StringType,
+            required=True,
             description="Columns to group by",
         ),
         th.Property("new_endpoint", th.BooleanType, default=True),
     ).to_dict()
 
-    def discover_streams(self) -> list[streams.OpenAiStream]:
+    def discover_streams(self) -> list[streams.OpenAIStream]:
         """Return a list of discovered streams.
 
         Returns:

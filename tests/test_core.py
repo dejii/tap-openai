@@ -4,7 +4,7 @@ import datetime
 
 from singer_sdk.testing import get_tap_test_class
 
-from tap_openai.tap import TapOpenAi
+from tap_openai.tap import TapOpenAI
 
 SAMPLE_CONFIG = {
     "start_date": datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%d"),
@@ -14,7 +14,7 @@ SAMPLE_CONFIG = {
 
 # Run standard built-in tap tests from the SDK:
 TestTapOpenAi = get_tap_test_class(
-    tap_class=TapOpenAi,
+    tap_class=TapOpenAI,
     config=SAMPLE_CONFIG,
 )
 

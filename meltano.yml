@@ -16,12 +16,7 @@ plugins:
     - about
     - stream-maps
 
-    # TODO: Declare settings and their types here:
     settings:
-    - name: username
-      label: Username
-      description: The username to use for authentication
-
     - name: auth_token
       kind: string
       description: API Key for authentication
@@ -29,7 +24,7 @@ plugins:
 
     - name: exclude_project_costs
       kind: boolean
-      value: True
+      value: False
 
     - name: start_date
       kind: date_iso8601
@@ -43,15 +38,20 @@ plugins:
     - name: group_by
       kind: string
 
-    # TODO: Declare required settings here:
-    settings_group_validation:
-    - [username, password]
-
-    # TODO: Declare default configuration values here:
-    config:
-      start_date: '2010-01-01T00:00:00Z'
 
   loaders:
   - name: target-jsonl
     variant: andyh1203
     pip_url: target-jsonl
+  - name: target-bigquery
+    namespace: target_bigquery
+    pip_url: git+https://github.com/burmecia/target-bigquery.git
+    executable: target-bigquery
+    config:
+      project_id: supabase-etl-prod-eu
+      dataset_id: raw_deji
+      location: EU
+      table_prefix: openai_
+      add_metadata_columns: true
+      replication_method: append
+      validate_records: false
