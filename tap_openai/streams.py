@@ -15,7 +15,7 @@ class BillingUsageStream(OpenAIStream):
     name = "billing_usage"
     path = "/v1/dashboard/billing/usage/export"
     primary_keys: t.ClassVar[list[str]] = ["user_id", "name", "date"]
-    replication_key = "timestamp"
+    replication_key = None
     schema = th.PropertiesList(
         th.Property("currency", th.StringType),
         th.Property("name", th.StringType),
